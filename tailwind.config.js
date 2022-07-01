@@ -9,6 +9,7 @@ module.exports = {
         success: "#3eb93b",
         danger: "#ed1c24",
         info: "#909399",
+        red: 'red'
       },
     },
   },

@@ -1,15 +1,14 @@
 <template>
-  <div class="mb-5 flex text-sm relative">
-    <div v-if="label" :style="{ width: computedLabelWidth }" class="relative">
-      <div style="color: red; top: -2px" class="absolute -left-2" v-if="required || isRequired">*</div>
-      <div>{{ label }}</div>
+  <div class="cc-form-item mb-5 flex text-sm relative">
+    <div v-if="label" :style="{ width: computedLabelWidth }" class="relative flex items-center justify-center">
+      <div class="cc-form-item-label" :class="{'cc-form-item-label-required': required || isRequired}">{{ label }}</div>
     </div>
     <div
       class="flex flex-1 flex-wrap items-center leading-8 text-sm relative"
       :style="{ marginLeft: !label ? computedLabelWidth : 0 }"
     >
       <slot></slot>
-      <div style="color: red" class="text-xs absolute -bottom-4 left-0">
+      <div  class="text-xs text-red absolute -bottom-4 left-0">
         {{ errorMessage }}
       </div>
     </div>
@@ -153,4 +152,18 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.cc-form-item {
+  &-label {
+    &-required {
+      &.cc-form-item-label {
+        &::before {
+          content: '*';
+          color: red;
+          margin-right: 4px;
+        }
+      }
+    }
+  }
+}
+</style>
