@@ -7,16 +7,20 @@ import Row from './row'
 import Col from './col'
 import Space from './space'
 import Divider from './divider'
+import Input from './input'
+import Form from './form'
 
 const components = [
   Icon,
   Overlay,
   Loading,
   Button,
+  Input,
   Row,
   Col,
   Space,
-  Divider
+  Divider,
+  Form,
 ]
 
 export default {

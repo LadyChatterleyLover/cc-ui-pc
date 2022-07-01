@@ -1,67 +1,67 @@
 <template>
-  <div>
-    <cc-button class="mr-3" @click="handleClick">MessageBox</cc-button>
-    <!-- <button class="mr-3"  @click="MessageBox({ message: 'warning', type: 'warning' })">warning</button>
-    <button class="mr-3"  @click="MessageBox({ message: 'info', type: 'info' })">info</button>
-    <button class="mr-3"  @click="MessageBox.warning('error')">error</button> -->
+  <div class="p-5">
+    <div style="width: 500px">
+      <cc-form ref="formRef" :model="model" :rules="rules" label-width="90">
+        <cc-form-item label="用户名" prop="username">
+          <cc-input v-model="model.username"></cc-input>
+        </cc-form-item>
+        <cc-form-item label="密码" prop="password">
+          <cc-input v-model="model.password"></cc-input>
+        </cc-form-item>
+        <cc-form-item>
+          <cc-button class="flex-1" block type="primary" @click="reset">重置</cc-button>
+          <cc-button class="flex-1" block type="primary" @click="submit">登录</cc-button>
+        </cc-form-item>
+      </cc-form>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {h} from 'vue'
 import Message from "@/components/message/src/message"
-import MessageBox from "@/components/messageBox/src/MessageBox"
+import { ref } from "vue"
 
-const handleClick = () => {
-  // MessageBox.alert("This is a message", "Title", {
-  //   confirmButtonText: "OK",
-  //   callback: (action: "confirm" | "cancel") => {
-  //     Message({
-  //       type: "info",
-  //       message: `action: ${action}`,
-  //     })
-  //   },
-  // })
+const formRef = ref<any>()
 
-  // MessageBox.confirm("proxy will permanently delete the file. Continue?", "Warning", {
-  //   type: "warning",
-  // })
-  // .then(() => {
-  //   Message({
-  //     type: 'success',
-  //     message: 'Delete completed',
-  //   })
-  // })
-  // .catch(() => {
-  //   Message({
-  //     type: 'info',
-  //     message: 'Delete canceled',
-  //   })
-  // })
+const model = ref({
+  username: "admin",
+  password: "123456",
+})
 
-  // MessageBox.prompt("Please input your e-mail", "Tip", {
-  //   confirmButtonText: "OK",
-  //   cancelButtonText: "Cancel",
-  // })
-  //   .then(({ value }: any) => {
-  //     Message({
-  //       type: "success",
-  //       message: `Your email is:${value}`,
-  //     })
-  //   })
-  //   .catch(() => {
-  //     Message({
-  //       type: "info",
-  //       message: "Input canceled",
-  //     })
-  //   })
-  MessageBox.alert(
-    '<strong>proxy is <i>HTML</i> string</strong>',
-    'HTML String',
+const rules = ref({
+  username: [
     {
-      dangerouslyUseHTMLString: true,
+      required: true,
+      message: "用户名不能为空",
+      trigger: "blur",
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: "密码不能为空",
+      trigger: "change",
+    },
+    {
+      min: 2,
+      max: 6,
+      message: "密码在2-6位之间",
+    },
+  ],
+})
+
+const submit = () => {
+  formRef.value.validate((valid: boolean) => {
+    if (valid) {
+      Message.success("提交成功")
+    } else {
+      Message.error("表单填写有误，请检查")
     }
-  )
+  })
+}
+
+const reset = () => {
+  formRef.value.resetFields()
 }
 </script>
 
