@@ -1,14 +1,21 @@
 <template>
-  <div class="cc-form-item mb-5 flex text-sm relative">
-    <div v-if="label" :style="{ width: computedLabelWidth }" class="relative flex items-center justify-center">
-      <div class="cc-form-item-label" :class="{'cc-form-item-label-required': required || isRequired}">{{ label }}</div>
+  <div class="cc-form-item mb-5 text-sm relative" 
+  :class="[`${inline ? 'inline-flex mr-8' : 'flex'}`]">
+    <div
+      v-if="label"
+      :style="{ width: computedLabelWidth, justifyContent: labelAlignValue }"
+      class="relative flex items-center"
+    >
+      <div class="cc-form-item-label" :class="{ 'cc-form-item-label-required': required || isRequired }">
+        {{ label }}
+      </div>
     </div>
     <div
       class="flex flex-1 flex-wrap items-center leading-8 text-sm relative"
-      :style="{ marginLeft: !label ? computedLabelWidth : 0 }"
+      :style="{ marginLeft: !label ? computedLabelWidth : 0, justifyContent: contentAlignValue }"
     >
       <slot></slot>
-      <div  class="text-xs text-red absolute -bottom-4 left-0">
+      <div class="text-xs text-red absolute -bottom-4 left-0">
         {{ errorMessage }}
       </div>
     </div>
@@ -26,12 +33,16 @@ const props = withDefaults(
     prop?: string
     labelWidth?: number | string
     required?: boolean
+    labelAlign?: "left" | "center" | "right"
+    contentAlign?: "left" | "center" | "right"
   }>(),
   {
     label: "",
     prop: "",
     labelWidth: "",
     required: false,
+    labelAlign: "left",
+    contentAlign: "left",
   }
 )
 
@@ -42,6 +53,7 @@ const rules = ref<Rules | Rules[]>()
 const initValue = ref<any>()
 
 const parentLabelWidth = inject<ComputedRef<number | string>>("labelWidth")
+const inline = inject<ComputedRef<boolean>>("inline")
 const computedLabelWidth = computed(() =>
   parentLabelWidth?.value ? parentLabelWidth?.value + "px" : props.labelWidth + "px"
 )
@@ -66,6 +78,19 @@ const isRequired = computed(() => {
   } else {
     return false
   }
+})
+
+// label对齐方式
+const labelAlignValue = computed(() => {
+  if (props.labelAlign === "left") return "flex-start"
+  else if (props.labelAlign === "center") return "center"
+  else return "flex-end"
+})
+// 内容对齐方式
+const contentAlignValue = computed(() => {
+  if (props.contentAlign === "left") return "flex-start"
+  else if (props.contentAlign === "center") return "center"
+  else return "flex-end"
 })
 
 // 验证方法
@@ -97,6 +122,11 @@ const validate = () => {
 // 重置表单值
 const resetField = () => {
   ;(model?.value as any)[props.prop] = initValue.value
+  errorMessage.value = ""
+}
+
+// 清除某个字段的验证
+const clearValidate = () => {
   errorMessage.value = ""
 }
 
@@ -144,6 +174,8 @@ onMounted(() => {
     addFiled({
       validate,
       resetField,
+      clearValidate,
+      name: props.prop,
     })
   }
   if (props.prop) {
@@ -158,7 +190,7 @@ onMounted(() => {
     &-required {
       &.cc-form-item-label {
         &::before {
-          content: '*';
+          content: "*";
           color: red;
           margin-right: 4px;
         }

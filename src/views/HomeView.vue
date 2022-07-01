@@ -24,8 +24,8 @@ import { ref } from "vue"
 const formRef = ref<any>()
 
 const model = ref({
-  username: "admin",
-  password: "123456",
+  username: "",
+  password: "",
 })
 
 const rules = ref({
@@ -61,7 +61,7 @@ const submit = () => {
 }
 
 const reset = () => {
-  formRef.value.resetFields()
+  formRef.value.clearValidate('username')
 }
 </script>
 

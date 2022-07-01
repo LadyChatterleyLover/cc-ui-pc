@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-full" :class="[`${inline ? 'inline-flex' : ''}`]">
     <slot></slot>
   </div>
 </template>
@@ -16,10 +16,12 @@ const props = withDefaults(
   defineProps<{
     model: Record<string, any>
     rules?: Rules
-    labelWidth?: number | string
+    labelWidth?: number | string,
+    inline?: boolean
   }>(),
   {
     labelWidth: "",
+    inline: false
   }
 )
 
@@ -42,6 +44,20 @@ const validate = (callback: Callback) => {
       .catch(() => callback(false))
   }
 }
+
+// 验证某个字段
+const validateField = (prop: string, callback: Callback) => {
+  if (filedList.value && filedList.value.length) {
+    const tasks = filedList.value.find((item: any) => item.name === prop)?.validate()
+    Promise.all([tasks])
+      .then((res) => {
+        const result = res.every((item) => item === true)
+        callback(result)
+      })
+      .catch(() => callback(false))
+  }
+}
+
 // 重置表单值
 const resetFields = () => {
   if (filedList.value && filedList.value.length) {
@@ -50,9 +66,19 @@ const resetFields = () => {
     })
   }
 }
+
+// 清除某个字段的验证
+const clearValidate = (prop: string) => {
+  if (filedList.value && filedList.value.length) {
+    const item = filedList.value.find((item: any) => item.name === prop)
+    item.clearValidate()
+  }
+}
 defineExpose({
   validate,
   resetFields,
+  validateField,
+  clearValidate
 })
 
 provide(
@@ -66,6 +92,10 @@ provide(
 provide(
   "rules",
   computed(() => props.rules)
+)
+provide(
+  "inline",
+  computed(() => props.inline)
 )
 provide("addFiled", addFiled)
 </script>
