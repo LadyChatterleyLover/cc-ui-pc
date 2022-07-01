@@ -1,9 +1,10 @@
 import { inject } from 'vue';
 <template>
-  <div class="pr-3 inline-flex rounded-sm flex-grow items-center justify-center">
+  <div class="cursor-pointer inline-flex rounded-sm flex-grow items-center justify-center">
     <input
+      :placeholder="placeholder"
       style="border: 1px solid #eee"
-      class="outline-0 w-full border-none h-8 leading-8"
+      class="px-3 outline-0 w-full border-none h-8 leading-8 cursor-pointer"
       v-model="modelValue"
       @input="handleInput"
       @blur="handleBlur"

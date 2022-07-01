@@ -9,6 +9,7 @@ import Space from './space'
 import Divider from './divider'
 import Input from './input'
 import Form from './form'
+import Select from './select'
 
 const components = [
   Icon,
@@ -21,6 +22,7 @@ const components = [
   Space,
   Divider,
   Form,
+  Select
 ]
 
 export default {
