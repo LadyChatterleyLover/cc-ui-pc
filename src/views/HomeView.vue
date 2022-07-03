@@ -1,9 +1,12 @@
 <template>
-  <div class="p-5 bg-slate-50 h-screen relative" style="top: 200px;left: 500px;">
-    <cc-popper v-model="show" placement="left">
+  <div class="p-5 bg-slate-50 h-screen">
+    <!-- <cc-popper v-model="show" placement="left">
      <div class="w-10 h-10 bg-primary"></div>
      <template #content>this is content</template>
-    </cc-popper>
+    </cc-popper> -->
+    <cc-select v-model="value" placeholder="请选择">
+      <cc-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></cc-option>
+    </cc-select>
   </div>
 </template>
 
@@ -41,4 +44,5 @@ const options = [
 ]
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>

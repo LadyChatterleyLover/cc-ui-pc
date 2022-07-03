@@ -1,29 +1,33 @@
 <template>
-  <div class="reference" ref="referenceRef" @click.stop.prevent="togglePopperShow"><slot></slot>
-  <transition name="cc-popper">
-    <div ref="popperRef" v-show="modelValue" @click.stop.prevent>
-      <slot name="content" v-if="$slots.content"></slot>
-      <div v-else>{{ content }}</div>
-    </div>
-  </transition>
+  <div class="reference" ref="referenceRef" @click.stop.prevent="togglePopperShow">
+    <slot></slot>
+    <transition name="cc-popper">
+      <div ref="popperRef" v-show="modelValue" @click.stop.prevent>
+        <div id="cc-popper-arrow" data-popper-arrow v-show="showArrow"></div>
+        <slot name="content" v-if="$slots.content"></slot>
+        <div v-else>{{ content }}</div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, type Ref, onMounted, watch, nextTick, onUnmounted } from 'vue'
 import { createPopper } from '@popperjs/core'
-import type {  Placement } from '@/types'
+import type { Placement } from '@/types'
 import { useClickOutside } from '@/hooks/useClickOutside'
 
 const props = withDefaults(defineProps<{
   modelValue: boolean,
   effect?: 'dark' | 'light'
   placement?: Placement,
-  content?: ''
+  content?: '',
+  showArrow?: boolean
 }>(), {
   effect: 'dark',
   content: '',
-  placement: 'bottom'
+  placement: 'bottom',
+  showArrow: true
 })
 
 const emits = defineEmits(['update:modelValue', 'hide', 'show'])
@@ -41,6 +45,7 @@ useClickOutside({
 
 // 创建 popper 实例
 const createPopperInstance = () => {
+  const arrow = document.getElementById('cc-popper-arrow')
   popperInstance.value = createPopper(referenceRef.value!, popperRef.value!, {
     placement: props.placement,
     modifiers: [
@@ -50,6 +55,13 @@ const createPopperInstance = () => {
         options: {
           offset: [0, 5]
         }
+      },
+      {
+      name: 'arrow',
+      options: {
+        enabled: true,
+        element: arrow,
+      },
       },
       {
         // 禁用计算样式，使用 transition 动画
@@ -114,5 +126,14 @@ onUnmounted(() => {
 .cc-popper-leave-to {
   opacity: 0;
   transform: scaleY(0);
+}
+#cc-popper-arrow {
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  background: inherit;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom:  8px solid #fff;
 }
 </style>
