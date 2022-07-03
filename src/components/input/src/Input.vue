@@ -28,8 +28,8 @@ const props = withDefaults(
 
 const emits = defineEmits(["update:modelValue", "input", "blur", "focus"])
 
-const setValidateChangeFlag = inject<(n: number) => void>("setValidateChangeFlag")
-const setValidateBlurFlag = inject<(n: number) => void>("setValidateBlurFlag")
+const setValidateChangeFlag = inject<((n: number) => void )| undefined>("setValidateChangeFlag", undefined)
+const setValidateBlurFlag = inject<((n: number) => void) | undefined>("setValidateBlurFlag", undefined)
 
 const inputFlag = ref(0)
 const blurFlag = ref(0)

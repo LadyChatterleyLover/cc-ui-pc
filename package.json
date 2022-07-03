@@ -9,6 +9,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.5",
     "async-validator": "^4.2.5",
     "vue": "^3.2.37",
     "vue-router": "^4.0.16"

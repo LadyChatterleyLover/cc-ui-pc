@@ -10,6 +10,8 @@ import Divider from './divider'
 import Input from './input'
 import Form from './form'
 import Select from './select'
+import Tabs from './Tabs'
+import Popper from './Popper'
 
 const components = [
   Icon,
@@ -22,7 +24,9 @@ const components = [
   Space,
   Divider,
   Form,
-  Select
+  Select,
+  Tabs,
+  Popper
 ]
 
 export default {

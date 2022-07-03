@@ -1,16 +1,22 @@
 <template>
   <div class="p-5 bg-slate-50 h-screen">
-    <cc-select v-model="value" class="m-2" placeholder="Select" size="large">
-      <cc-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-    </cc-select>
+    <cc-popper v-model="show">
+     <div class="w-10 h-10 bg-primary"></div>
+     <template #content>this is content</template>
+    </cc-popper>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue"
 
-const value = ref("")
+const show = ref(false)
+const activeName = ref('first')
+const handleClick = (tab: any, event: Event) => {
+  console.log(tab, event)
+}
 
+const value = ref("")
 const options = [
   {
     value: "Option1",
