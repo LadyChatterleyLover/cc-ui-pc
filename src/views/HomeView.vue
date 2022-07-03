@@ -1,6 +1,6 @@
 <template>
-  <div class="p-5 bg-slate-50 h-screen">
-    <cc-popper v-model="show">
+  <div class="p-5 bg-slate-50 h-screen relative" style="top: 200px;left: 500px;">
+    <cc-popper v-model="show" placement="left">
      <div class="w-10 h-10 bg-primary"></div>
      <template #content>this is content</template>
     </cc-popper>

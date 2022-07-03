@@ -1,13 +1,12 @@
 <template>
-  <div class="reference" ref="referenceRef" @click.stop.prevent="togglePopperShow">
-    <slot></slot>
-  </div>
+  <div class="reference" ref="referenceRef" @click.stop.prevent="togglePopperShow"><slot></slot>
   <transition name="cc-popper">
-    <div ref="popperRef" v-show="modelValue">
+    <div ref="popperRef" v-show="modelValue" @click.stop.prevent>
       <slot name="content" v-if="$slots.content"></slot>
       <div v-else>{{ content }}</div>
     </div>
   </transition>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -23,7 +22,8 @@ const props = withDefaults(defineProps<{
   content?: ''
 }>(), {
   effect: 'dark',
-  content: ''
+  content: '',
+  placement: 'bottom'
 })
 
 const emits = defineEmits(['update:modelValue', 'hide', 'show'])
@@ -42,6 +42,7 @@ useClickOutside({
 // 创建 popper 实例
 const createPopperInstance = () => {
   popperInstance.value = createPopper(referenceRef.value!, popperRef.value!, {
+    placement: props.placement,
     modifiers: [
       {
         // 偏移值 左右，上下
@@ -103,12 +104,11 @@ onUnmounted(() => {
 
 .cc-popper-enter-active,
 .cc-popper-leave-active {
-  transition: opacity .3s ease-out, transform .3s ease-out;
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
   opacity: 1;
   transform: scaleY(1);
   transform-origin: center top;
 }
-
 
 .cc-popper-enter-from,
 .cc-popper-leave-to {
