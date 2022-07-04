@@ -1,35 +1,48 @@
 <template>
-  <div class="reference" ref="referenceRef" @click.stop.prevent="togglePopperShow">
+  <div
+    class="reference"
+    ref="referenceRef"
+    @click.stop.prevent="togglePopperShow"
+    @mouseenter.stop.prevent="mouseenterTogglePopperShow"
+    @mouseleave="mouseleave"
+    @contextmenu="contextmenuTogglePopperShow"
+  >
     <slot></slot>
   </div>
-  <transition name="cc-popper">
-    <div ref="popperRef" v-show="modelValue" @click.stop.prevent>
-      <div id="cc-popper-arrow" data-popper-arrow v-show="showArrow && modelValue"></div>
-      <slot name="content" v-if="$slots.content"></slot>
-      <div v-else>{{ content }}</div>
-    </div>
-
-  </transition>
+  <teleport to="body">
+    <transition name="cc-popper" v-show="modelValue">
+      <div ref="popperRef" @click.stop.prevent="" @mouseleave.stop.prevent="" @contextmenu.stop.prevent="">
+        <div id="cc-popper-arrow" data-popper-arrow v-show="showArrow && modelValue"></div>
+        <slot name="content" v-if="$slots.content"></slot>
+        <div v-else>{{ content }}</div>
+      </div>
+    </transition>
+  </teleport>
 </template>
 
 <script lang="ts" setup>
-import {ref, type Ref, onMounted, watch, nextTick, onUnmounted} from 'vue'
-import {createPopper} from '@popperjs/core'
-import type {Placement} from '@/types'
-import {useClickOutside} from '@/hooks/useClickOutside'
+import { ref, type Ref, onMounted, watch, nextTick, onUnmounted } from 'vue'
+import { createPopper } from '@popperjs/core'
+import type { Placement } from '@/types'
+import { useClickOutside } from '@/hooks/useClickOutside'
 
-const props = withDefaults(defineProps<{
-  modelValue: boolean,
-  effect?: 'dark' | 'light'
-  placement?: Placement,
-  content?: '',
-  showArrow?: boolean
-}>(), {
-  effect: 'dark',
-  content: '',
-  placement: 'bottom',
-  showArrow: true
-})
+const props = withDefaults(
+  defineProps<{
+    modelValue: boolean
+    effect?: 'dark' | 'light'
+    placement?: Placement
+    content?: ''
+    showArrow?: boolean
+    trigger?: 'click' | 'hover' | 'contextmenu' | string[]
+  }>(),
+  {
+    effect: 'dark',
+    content: '',
+    placement: 'bottom',
+    showArrow: true,
+    trigger: 'click',
+  }
+)
 
 const emits = defineEmits(['update:modelValue', 'hide', 'show'])
 
@@ -41,7 +54,8 @@ useClickOutside({
   target: referenceRef as Ref<HTMLElement>,
   callback: () => {
     emits('update:modelValue', false)
-  }
+  },
+  eventName: props.trigger as keyof DocumentEventMap,
 })
 
 // 创建 popper 实例
@@ -54,8 +68,8 @@ const createPopperInstance = () => {
         // 偏移值 左右，上下
         name: 'offset',
         options: {
-          offset: [0, 5]
-        }
+          offset: [0, 5],
+        },
       },
       {
         name: 'arrow',
@@ -69,10 +83,10 @@ const createPopperInstance = () => {
         name: 'computeStyles',
         options: {
           gpuAcceleration: false,
-          adaptive: false
-        }
-      }
-    ]
+          adaptive: false,
+        },
+      },
+    ],
   })
   nextTick(() => {
     // 异步更新
@@ -87,23 +101,50 @@ const destroyPopperInstance = () => {
 }
 
 const togglePopperShow = () => {
-  emits('update:modelValue', !props.modelValue)
+  if (props.trigger === 'click' || (props.trigger as string[]).includes('trigger')) {
+    emits('update:modelValue', !props.modelValue)
+  } else {
+    return
+  }
+}
+
+const mouseenterTogglePopperShow = () => {
+  if (props.trigger === 'hover' || (props.trigger as string[]).includes('hover')) {
+    emits('update:modelValue', !props.modelValue)
+  } else {
+    return
+  }
+}
+
+const contextmenuTogglePopperShow = () => {
+  if (props.trigger === 'contextmenu' || (props.trigger as string[]).includes('contextmenu')) {
+    emits('update:modelValue', !props.modelValue)
+  } else {
+    return
+  }
+}
+
+const mouseleave = () => {
+  if (props.trigger === 'hover' || (props.trigger as string[]).includes('hover')) {
+    emits('update:modelValue', !props.modelValue)
+  }
 }
 
 // 监听 visible 属性
-watch(() => props.modelValue, (val) => {
-  if (val) {
-    createPopperInstance()
-    emits('show')
-  } else {
-    emits('hide')
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val) {
+      createPopperInstance()
+      emits('show')
+    } else {
+      emits('hide')
+    }
   }
-})
-
+)
 
 onMounted(() => {
   createPopperInstance()
-
 })
 
 onUnmounted(() => {
