@@ -2,24 +2,21 @@
   <div class="reference" ref="referenceRef" @click.stop.prevent="togglePopperShow">
     <slot></slot>
   </div>
-    <teleport to="body">
   <transition name="cc-popper">
-  
-      <div :style="{minWidth: width + 'px'}" ref="popperRef" v-show="modelValue" @click.stop.prevent>
+    <div ref="popperRef" v-show="modelValue" @click.stop.prevent>
       <div id="cc-popper-arrow" data-popper-arrow v-show="showArrow && modelValue"></div>
       <slot name="content" v-if="$slots.content"></slot>
       <div v-else>{{ content }}</div>
     </div>
-    
+
   </transition>
-  </teleport>
 </template>
 
 <script lang="ts" setup>
-import { ref, type Ref, onMounted, watch, nextTick, onUnmounted } from 'vue'
-import { createPopper } from '@popperjs/core'
-import type { Placement } from '@/types'
-import { useClickOutside } from '@/hooks/useClickOutside'
+import {ref, type Ref, onMounted, watch, nextTick, onUnmounted} from 'vue'
+import {createPopper} from '@popperjs/core'
+import type {Placement} from '@/types'
+import {useClickOutside} from '@/hooks/useClickOutside'
 
 const props = withDefaults(defineProps<{
   modelValue: boolean,
@@ -39,12 +36,11 @@ const emits = defineEmits(['update:modelValue', 'hide', 'show'])
 const referenceRef = ref<HTMLElement | null>(null)
 const popperRef = ref<HTMLElement | null>(null)
 const popperInstance = ref<any>(null)
-const width = ref<number>(0)
 
 useClickOutside({
   target: referenceRef as Ref<HTMLElement>,
   callback: () => {
-    emits('update:modelValue', !props.modelValue)
+    emits('update:modelValue', false)
   }
 })
 
@@ -107,8 +103,7 @@ watch(() => props.modelValue, (val) => {
 
 onMounted(() => {
   createPopperInstance()
-  const rect = referenceRef.value?.getBoundingClientRect()
-  width.value = Number(rect?.width)
+
 })
 
 onUnmounted(() => {

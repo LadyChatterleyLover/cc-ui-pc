@@ -1,11 +1,12 @@
 <template>
   <cc-popper v-model="visible" placement="bottom">
-    <cc-input 
+    <cc-input
+    ref="selectInputRef"
     class="cursor-pointer"
-     placeholder="请选择" 
+     placeholder="请选择"
     v-model="value" ></cc-input>
     <template #content>
-      <div class="cc-select-content relative mt-2 bg-white rounded-sm">
+      <div :style="{minWidth: width + 'px'}" class="cc-select-content relative mt-2 bg-white rounded-sm">
           <slot></slot>
         </div>
     </template>
@@ -13,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { provide, ref, watch } from "vue"
+import { provide, ref, watch, onMounted,nextTick } from "vue"
 
 const props = withDefaults(
   defineProps<{
@@ -28,6 +29,9 @@ const props = withDefaults(
 
 const value = ref<string | number | boolean | object>("")
 const visible = ref<boolean>(false)
+const width = ref<number>(0)
+const selectInputRef = ref<HTMLDivElement>()
+
 
 const emits = defineEmits(["update:modelValue"])
 
@@ -55,6 +59,13 @@ watch(
     emits("update:modelValue", val)
   }
 )
+
+onMounted(() => {
+  nextTick(() => {
+    const rect = selectInputRef.value?.getBoundingClientRect()
+    width.value = Number(rect?.width)
+  })
+})
 
 </script>
 

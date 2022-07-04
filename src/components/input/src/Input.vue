@@ -1,6 +1,6 @@
 import { inject } from 'vue';
 <template>
-  <div class="cursor-pointer inline-flex rounded-sm flex-grow items-center justify-center">
+  <div ref="inputRef" class="cursor-pointer inline-flex rounded-sm flex-grow items-center justify-center">
     <input
       :placeholder="placeholder"
       style="border: 1px solid #eee"
@@ -33,6 +33,7 @@ const setValidateBlurFlag = inject<((n: number) => void) | undefined>("setValida
 
 const inputFlag = ref(0)
 const blurFlag = ref(0)
+const inputRef = ref<HTMLDivElement>()
 
 const handleInput = (e: Event) => {
   emits("update:modelValue", (e as any).target.value)
@@ -52,6 +53,14 @@ const handleFocus = (e: Event) => {
   setValidateBlurFlag?.(0)
   emits('focus', e)
 }
+
+const getBoundingClientRect = () => {
+  return inputRef.value?.getBoundingClientRect()
+}
+
+defineExpose({
+  getBoundingClientRect
+})
 </script>
 
 <style lang="scss" scoped></style>
