@@ -1,14 +1,18 @@
 <template>
   <div class="reference" ref="referenceRef" @click.stop.prevent="togglePopperShow">
     <slot></slot>
-    <transition name="cc-popper">
-      <div ref="popperRef" v-show="modelValue" @click.stop.prevent>
-        <div id="cc-popper-arrow" data-popper-arrow v-show="showArrow"></div>
-        <slot name="content" v-if="$slots.content"></slot>
-        <div v-else>{{ content }}</div>
-      </div>
-    </transition>
   </div>
+    <teleport to="body">
+  <transition name="cc-popper">
+  
+      <div :style="{minWidth: width + 'px'}" ref="popperRef" v-show="modelValue" @click.stop.prevent>
+      <div id="cc-popper-arrow" data-popper-arrow v-show="showArrow && modelValue"></div>
+      <slot name="content" v-if="$slots.content"></slot>
+      <div v-else>{{ content }}</div>
+    </div>
+    
+  </transition>
+  </teleport>
 </template>
 
 <script lang="ts" setup>
@@ -35,6 +39,7 @@ const emits = defineEmits(['update:modelValue', 'hide', 'show'])
 const referenceRef = ref<HTMLElement | null>(null)
 const popperRef = ref<HTMLElement | null>(null)
 const popperInstance = ref<any>(null)
+const width = ref<number>(0)
 
 useClickOutside({
   target: referenceRef as Ref<HTMLElement>,
@@ -57,11 +62,11 @@ const createPopperInstance = () => {
         }
       },
       {
-      name: 'arrow',
-      options: {
-        enabled: true,
-        element: arrow,
-      },
+        name: 'arrow',
+        options: {
+          enabled: true,
+          element: arrow,
+        },
       },
       {
         // 禁用计算样式，使用 transition 动画
@@ -102,6 +107,8 @@ watch(() => props.modelValue, (val) => {
 
 onMounted(() => {
   createPopperInstance()
+  const rect = referenceRef.value?.getBoundingClientRect()
+  width.value = Number(rect?.width)
 })
 
 onUnmounted(() => {
@@ -127,6 +134,7 @@ onUnmounted(() => {
   opacity: 0;
   transform: scaleY(0);
 }
+
 #cc-popper-arrow {
   position: absolute;
   width: 0px;
@@ -134,6 +142,6 @@ onUnmounted(() => {
   background: inherit;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
-  border-bottom:  8px solid #fff;
+  border-bottom: 8px solid #fff;
 }
 </style>
